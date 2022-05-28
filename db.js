@@ -40,12 +40,32 @@ const newUser = (req, res) => {
     } catch (err) {
         console.log(err.stack)
     }
-
 }
 
+const checkUser = (req, res) => {
+    const user = req.body;
+    console.log('USER:', user);
+    let checkQuery = `SELECT FROM users WHERE
+                        (email ilike '${user.email} AND password ilike '${user.password}')`
+    pool.query(checkQuery, (err, result) => {
+        if (err) {
+            res.send(`You blew it: ${err}`)
+        }
+
+        if(result.rowCount > 0) {
+            console.log('RESULT:', result.rowCount)
+            res.send(`
+            In there like swimwear, Result: ${result}
+            `);
+        } else {
+            res.send(`Message: Let's try that again`)
+        }
+    })
+}
 
 
 module.exports = pool;
 module.exports = {
-    newUser
+    newUser,
+    checkUser
 }
